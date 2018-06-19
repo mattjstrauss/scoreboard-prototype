@@ -2,13 +2,44 @@
 	
 	<div>
 		
-		<div class="ui card centered" v-for="player in leaderBoard">
+		<div class="ui card centered" v-for="(player, index) in leaderBoard">
 
 			<div class="content">
 
 				<div class="header">
+					
+					<div class="player-details" v-show="player !== editingPlayer">
+					
+						<h3 class="left floated">
+							
+							<i v-if="index == 0" class="ui icon trophy yellow"></i>
+							<i v-if="index == 1" class="ui icon trophy grey"></i>
+							<i v-if="index == 2" class="ui icon trophy brown"></i>
+							<span class="player-name">{{player.playerName}}</span> - 
+							<span class="player-score">{{player.playerScore}}</span>
+							
+						</h3>
 
-					<h4>{{player.playerName}} - {{player.playerScore}}</h4>
+					</div>
+					
+					<div class="ui form">
+					
+						<div class="player-update-inputs field" v-show="player == editingPlayer">
+							
+							<div class="fields">
+							
+								<div class="ui tiny input eleven wide field">
+			  						<input type="text" placeholder="Name" v-model="playerName">
+								</div>
+								<div class="ui tiny input five wide field">
+								  <input type="text" placeholder="Score" v-model="playerScore">
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
 
 				</div>
 				
@@ -17,21 +48,35 @@
 			<div class="extra content">
 				
 				<div class="player-actions">
-					
-						<a class="right floated" href="#" v-show="!isEditing" v-on:click="editPlayer">
-							<i class="ui icon edit"></i>
-							Edit
+
+					<a class="ui basic button mini left floated" href="#" v-show="player === editingPlayer" v-on:click="deletePlayer(player)">
+						<i class="ui icon trash"></i>
+						Delete
+					</a>
+
+					<div class="ui buttons mini right floated">
+
+						<a class="ui button" href="#" v-show="player === editingPlayer" v-on:click="cancelPlayerEdits">
+							<i class="ui icon times"></i>
+							Cancel
 						</a>
 
-						<a class="right floated" href="#" v-show="isEditing" v-on:click="savePlayerEdits">
+						<a class="ui button" href="#" v-show="player === editingPlayer" v-on:click="savePlayerEdits">
 							<i class="ui icon save"></i>
 							Save
 						</a>
-					
-						<a class="left floated" href="#" v-show="isEditing" v-on:click="deletePlayer(player)">
-							<i class="ui icon trash"></i>
-							Delete
-						</a>
+
+					</div>
+
+					<a class="ui button mini left floated" href="#" v-show="player !== editingPlayer" v-on:click="editPlayer(player)">
+						<i class="ui icon edit"></i>
+						Edit
+					</a>
+
+					<a class="ui button mini right floated" href="#" v-show="player !== editingPlayer" v-on:click="challenge(player)">
+						<i class="ui icon heart outline"></i>
+						Challenge
+					</a>
 
 				</div>
 
@@ -48,25 +93,38 @@
 		</button>
 
 		<div class="ui centered card" v-show="isCreating">
+
 			<div class="content">
+
 				<div class="ui form">
+
 					<div class="field">
+
 						<label>Name</label>
 						<input type="text" placeholder="Name" v-model="playerName">
+
 					</div>
-					<div class="ui two button attached buttons">
-						<button class="ui positive basic button" v-on:click="addPlayer">
-							<i class="ui icon plus check circle"></i> Create
-						</button>
-						<button class="ui negative basic button" v-on:click="closeForm">
-							<i class="ui icon plus times circle"></i> Cancel
-						</button>
-					</div>
+
+					<button class="ui negative primary button" v-on:click="closeForm">
+
+						<i class="ui icon plus times circle"></i> Cancel
+
+					</button>
+
+					<button class="ui positive primary button" v-on:click="addPlayer">
+
+						<i class="ui icon plus check circle"></i> Create
+
+					</button>
+
 				</div>
+
 			</div>
+
 		</div>
 
 	</div>
+
 	</div>
 	
 </template>
@@ -94,8 +152,9 @@
 			return {
 				players: [],
 				playerName: '',
+				playerScore: '',
 				isCreating: false,
-				isEditing: false,
+				editingPlayer: null,
 			}
 		},
 		methods: {
@@ -113,17 +172,26 @@
 				this.isCreating = false;
 			},
 			// Enables "Player Editing" abilities
-			editPlayer() {
-				this.isEditing = true;
+			editPlayer(player) {
+				this.editingPlayer = player;
+				this.playerName = player.playerName;
+				this.playerScore = player.playerScore;
 			},
-			// Removes "Player Editing" abilities
+			// Cancels and removes "Player Editing" abilities
+			cancelPlayerEdits() {
+				this.editingPlayer = null;
+				this.playerName = '';	
+				this.playerScore = '';	
+			},
+			// Save and removes "Player Editing" abilities
 			savePlayerEdits() {
-				this.isEditing = false;	
+				playersRef.child(this.editingPlayer.id).update({playerName: this.playerName, playerScore: this.playerScore});
+				this.cancelPlayerEdits();
 			},
 			// Deletes Player
 			deletePlayer(player) {
 				playersRef.child(player.id).remove();
-				this.isEditing = false;	
+				this.editingPlayer = false;	
 			}
 		},
 		created() {
@@ -136,6 +204,15 @@
 				const index = this.players.indexOf(deletedPlayer);
 
 				this.players.splice(index, 1);
+
+			});
+
+			playersRef.on('child_changed', snapshot => {
+
+				const updatedPlayer = this.players.find(player => player.id === snapshot.key);
+
+				updatedPlayer.playerName = snapshot.val().playerName;
+				updatedPlayer.playerScore = snapshot.val().playerScore;
 
 			});
 		},
