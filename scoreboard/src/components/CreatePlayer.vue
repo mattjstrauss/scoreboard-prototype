@@ -1,33 +1,34 @@
 <template>
 	
 	<div>
-	<div class="ui card centered" v-for="player in players">
+		
+		<div class="ui card centered" v-for="player in leaderBoard">
 
-		<div class="content">
+			<div class="content">
 
-			<div class="header">
+				<div class="header">
 
-				<h4>{{player.playerName}} - {{player.playerScore}}</h4>
+					<h4>{{player.playerName}} - {{player.playerScore}}</h4>
 
-			</div>
-			
-		</div>
-
-		<div class="extra content">
-			
-			<div class="right floated player-actions">
+				</div>
 				
-					<i class="ui icon edit"></i>
-					Edit
-				
-					<i class="ui icon trash"></i>
-					Delete
-
 			</div>
 
-		</div>
+			<div class="extra content">
+				
+				<div class="right floated player-actions">
+					
+						<i class="ui icon edit"></i>
+						Edit
+					
+						<i class="ui icon trash"></i>
+						Delete
 
-	</div>
+				</div>
+
+			</div>
+
+		</div>
 
 	<div id="create-player" class="ui basic content center aligned segment">
 		
@@ -41,7 +42,7 @@
 			<div class="content">
 				<div class="ui form">
 					<div class="field">
-						<label>{{playerName}}</label>
+						<label>Name</label>
 						<input type="text" placeholder="Name" v-model="playerName">
 					</div>
 					<div class="ui two button attached buttons">
@@ -85,7 +86,6 @@
 		data() {
 			return {
 				players: [],
-				messages: [],
 				playerName: '',
 				isCreating: false,
 			}
@@ -93,7 +93,7 @@
 		methods: {
 			addPlayer() {
 				playersRef.push({playerName: this.playerName, playerScore: 0})
-        		this.messageText = ''
+        		this.playerName = ''
 			},
 			openForm() {
 				this.isCreating = true;
@@ -104,12 +104,11 @@
 		},
 		created() {
 			playersRef.on('child_added', snapshot => this.players.push(snapshot.val()));
-			// playersRef.on('child_added', function(snapshot){
-			// 	console.log(snapshot.val());
-			// })
-			// database.ref('players').on('child_added', function(snapshot){
-			// 	this.players.push(snapshot.val());
-			// })
+		},
+		computed: {
+		  leaderBoard: function () {
+		    return _.orderBy(this.players, 'playerScore', 'desc')
+		  }
 		}
 	}
 
