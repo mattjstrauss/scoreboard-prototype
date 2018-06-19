@@ -16,13 +16,22 @@
 
 			<div class="extra content">
 				
-				<div class="right floated player-actions">
+				<div class="player-actions">
 					
-						<i class="ui icon edit"></i>
-						Edit
+						<a class="right floated" href="#" v-show="!isEditing" v-on:click="editPlayer">
+							<i class="ui icon edit"></i>
+							Edit
+						</a>
+
+						<a class="right floated" href="#" v-show="isEditing" v-on:click="savePlayerEdits">
+							<i class="ui icon save"></i>
+							Save
+						</a>
 					
-						<i class="ui icon trash"></i>
-						Delete
+						<a class="left floated" href="#" v-show="isEditing" v-on:click="deletePlayer(player)">
+							<i class="ui icon trash"></i>
+							Delete
+						</a>
 
 				</div>
 
@@ -78,9 +87,7 @@
 	const database = firebase.database();
  	const playersRef = database.ref('players');
 
- 	database.ref('players').on('value', function(snapshot){
- 		console.log(snapshot.val());
- 	});
+ 	database.ref('players').on('value', snapshot => console.log(snapshot.val()));
 
 	export default {
 		data() {
@@ -88,22 +95,49 @@
 				players: [],
 				playerName: '',
 				isCreating: false,
+				isEditing: false,
 			}
 		},
 		methods: {
+			// Pushes the name to Firebase and empties the field
 			addPlayer() {
 				playersRef.push({playerName: this.playerName, playerScore: 0})
         		this.playerName = ''
 			},
+			// Shows "Add Player" form
 			openForm() {
 				this.isCreating = true;
 			},
+			// Hides "Add Player" form
 			closeForm() {
 				this.isCreating = false;
+			},
+			// Enables "Player Editing" abilities
+			editPlayer() {
+				this.isEditing = true;
+			},
+			// Removes "Player Editing" abilities
+			savePlayerEdits() {
+				this.isEditing = false;	
+			},
+			// Deletes Player
+			deletePlayer(player) {
+				playersRef.child(player.id).remove();
+				this.isEditing = false;	
 			}
 		},
 		created() {
-			playersRef.on('child_added', snapshot => this.players.push(snapshot.val()));
+			playersRef.on('child_added', snapshot => this.players.push({...snapshot.val(), id: snapshot.key}));
+
+			playersRef.on('child_removed', snapshot => {
+
+				const deletedPlayer = this.players.find(player => player.id === snapshot.key);
+
+				const index = this.players.indexOf(deletedPlayer);
+
+				this.players.splice(index, 1);
+
+			});
 		},
 		computed: {
 		  leaderBoard: function () {
