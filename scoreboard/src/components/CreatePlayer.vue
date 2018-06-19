@@ -17,7 +17,7 @@
 							<i v-if="index == 2" class="ui icon trophy brown"></i>
 							<span class="player-name">{{player.playerName}}</span> - 
 							<span class="player-score">{{player.playerScore}}</span>
-							
+
 						</h3>
 
 					</div>
@@ -74,7 +74,8 @@
 					</a>
 
 					<a class="ui button mini right floated" href="#" v-show="player !== editingPlayer" v-on:click="challenge(player)">
-						<i class="ui icon heart outline"></i>
+						<i class="ui icon heart outline" v-show="player !== isChallenger"></i>
+						<i class="ui icon heart red" v-show="player == isChallenger"></i>
 						Challenge
 					</a>
 
@@ -154,7 +155,9 @@
 				playerName: '',
 				playerScore: '',
 				isCreating: false,
+				isChallenger: null,
 				editingPlayer: null,
+				challengers: [],
 			}
 		},
 		methods: {
@@ -192,6 +195,11 @@
 			deletePlayer(player) {
 				playersRef.child(player.id).remove();
 				this.editingPlayer = false;	
+			},
+			challenge(player) {
+				// challengers.push({playerName: this.playerName, playerScore: this.playerScore})
+				console.log(player.id);
+				this.isChallenger = player;
 			}
 		},
 		created() {
