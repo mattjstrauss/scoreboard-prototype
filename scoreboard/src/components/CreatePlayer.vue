@@ -59,7 +59,7 @@
 			  						<input type="text" placeholder="Name" v-model="playerName">
 								</div>
 								<div class="ui tiny input five wide field">
-								  <input type="text" placeholder="Score" v-model="playerScore">
+								  <input type="number" placeholder="Score" v-model.number="playerScore">
 								</div>
 
 							</div>
@@ -221,7 +221,7 @@
 			},
 			// Save and removes "Player Editing" abilities
 			savePlayerEdits() {
-				playersRef.child(this.editingPlayer.id).update({playerName: this.playerName, playerScore: this.playerScore});
+				playersRef.child(this.editingPlayer.id).update({playerName: this.playerName, playerScore: Math.round(Number(this.playerScore))});
 				this.cancelPlayerEdits();
 			},
 			// Deletes Player
