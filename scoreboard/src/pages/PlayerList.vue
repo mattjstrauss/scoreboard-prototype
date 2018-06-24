@@ -4,7 +4,7 @@
 
 		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="!matchSet">
 
-			<span class="ui right corner label">
+			<span class="ui right corner label" v-if="index < 3">
         		<i v-if="index == 0" class="ui icon trophy yellow"></i>
 				<i v-if="index == 1" class="ui icon trophy grey"></i>
 				<i v-if="index == 2" class="ui icon trophy brown"></i>

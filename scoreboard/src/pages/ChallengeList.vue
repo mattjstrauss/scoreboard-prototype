@@ -3,23 +3,35 @@
 	<div id="challenge-list">
 
 		<div class="ui card centered" v-show="!selectingPlayers && !creatingPlayer">
+
 			<div class="content">
+
 				<div class="header">
+
 					<h3>What kind of Player are you?</h3>
-					<div class="ui form">
 
-						<button class="ui button tiny" v-on:click="createPlayer">
-							New Player
-						</button>
-
-						<button class="ui button primary tiny" v-on:click="selectPlayers">
-							Returning Player
-						</button>
-
-					</div>
 				</div>
+
 			</div>
+
+			<div class="extra content">
+
+				<div class="ui form">
+
+					<button class="ui button" v-on:click="createPlayer">
+						Noob
+					</button>
+
+					<button class="ui button primary" v-on:click="selectPlayers">
+						Returning Player
+					</button>
+
+				</div>
+
+			</div>
+
 		</div>
+
 
 		<div class="ui card centered" v-show="challengerOne || challengerTwo">
 
@@ -27,59 +39,62 @@
 
 				<div class="header">
 
-							<button v-if="challengers.challengerOneRating > 50" class="ui animated button fluid large red" v-on:click="removeChallengerOne" v-show="challengerOne">
-
-							  	<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
-						  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
-
-							  	<div class="hidden content">
-
-							  		<i class="cancel icon"></i> Remove
-
-							  	</div>
-
-						  	</button>
-
-						  	<button v-else class="ui animated button fluid large" v-on:click="removeChallengerOne" v-show="challengerOne">
-
-						  		<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
-						  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
-
-							  	<div class="hidden content">
-
-							  		<i class="cancel icon"></i> Remove
-
-							  	</div>
-
-						  	</button>
-
-				  		<div class="vs"></div>
-						  
-					  		<button class="ui animated button fluid large" v-on:click="removeChallengerTwo" v-show="challengerTwo">
-						  	
-						  		<div class="visible content" v-if="challengers.challengerTwoNickname">{{challengers.challengerTwoNickname}}</div> 
-						  		<div class="visible content" v-else>{{challengers.challengerTwoName}}</div>
-						  	
-						  		<div class="hidden content">
-							    
-							    	<i class="cancel icon"></i> Remove
-
-								</div>
-
-					  		</button>
+					<h3>Challengers</h3>
 
 				</div>
 
 			</div>
 
-			<div class="extra content" v-show="matchSet">
+			<div class="extra content">
 
-				<button class="ui button green fluid large">Start Game</button>
+				<button v-if="challengers.challengerOneRating > 50" class="ui animated button fluid large red" v-on:click="removeChallengerOne" v-show="challengerOne">
+
+				  	<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
+			  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
+
+				  	<div class="hidden content">
+
+				  		<i class="user times icon"></i> Remove
+
+				  	</div>
+
+			  	</button>
+
+			  	<button v-else class="ui animated button fluid large" v-on:click="removeChallengerOne" v-show="challengerOne">
+
+			  		<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
+			  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
+
+				  	<div class="hidden content">
+
+				  		<i class="user times icon"></i> Remove
+
+				  	</div>
+
+			  	</button>
+
+	  		<div class="vs"></div>
+			  
+		  		<button class="ui animated button fluid large" v-on:click="removeChallengerTwo" v-show="challengerTwo">
+			  	
+			  		<div class="visible content" v-if="challengers.challengerTwoNickname">{{challengers.challengerTwoNickname}}</div> 
+			  		<div class="visible content" v-else>{{challengers.challengerTwoName}}</div>
+			  	
+			  		<div class="hidden content">
+				    
+				    	<i class="user times icon"></i> Remove
+
+					</div>
+
+		  		</button>
+
 			</div>
+
+			<button class="ui button green fluid large" v-show="matchSet">Start Game</button>
 
 		</div>
 
-		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="selectingPlayers && !matchSet && challengers.challengerOneName !== player.playerName && challengers.challengerTwoName !== player.playerName">
+		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="!creatingPlayer && selectingPlayers && !matchSet && challengers.challengerOneName !== player.playerName && challengers.challengerTwoName !== player.playerName">
 
 			<div class="content left aligned">
 
@@ -92,8 +107,7 @@
 							<span class="player-name" v-if="player.playerNickname">{{player.playerNickname}}</span> 
 							<span class="player-name" v-else>{{player.playerName}}</span> 
 							
-							<i class="ui icon toggle on green" v-show="challengers.challengerOneName == player.playerName || challengers.challengerTwoName == player.playerName"></i>
-							<i class="ui icon plus square outline"></i>
+							<i class="ui icon user plus"></i>
 
 						</button>
 
@@ -106,11 +120,11 @@
 			<div class="extra content left aligned">
 
 				<div class="left floated">
-				    <span class="ui green label" data-tooltip="Wins">+ {{player.playerWins}}</span>
-				    <span class="ui red label" data-tooltip="Losses">- {{player.playerLosses}}</span>
+				    <span class="ui green label" data-tooltip="Wins" data-position="bottom center">+ {{player.playerWins}}</span>
+				    <span class="ui red label" data-tooltip="Losses" data-position="bottom center">- {{player.playerLosses}}</span>
 				</div>
 
-				<div class="right floated" data-tooltip="Winning Percentage = (Wins / Total Games)*100">
+				<div class="right floated" data-tooltip="Winning Percentage = (Wins / Total Games)*100" data-position="bottom center">
 
 					Difficulty: 
 
@@ -161,6 +175,14 @@
 			<div class="ui centered card">
 
 				<div class="content">
+
+					<div class="header">
+						<h3>Enter your info to get started</h3>
+					</div>
+
+				</div>
+							
+				<div class="extra content">
 
 					<div class="ui form">
 
@@ -238,7 +260,7 @@
 		},
 		methods: {
 			// Pushes the name to Firebase and empties the field
-			addPlayer() {
+			addPlayer(player) {
 				playersRef.push({
 					playerName: this.playerName,
 					playerNickname: this.playerNickname,
@@ -247,7 +269,21 @@
 					playerGamesPlayed: 0,
 					playerRating: 0,
 				})
-        		this.playerName = '';
+        		if(!this.challengerOne){
+					this.challengerOne = player;
+					this.$set(this.challengers, 'challengerOneName', this.playerName);
+					this.$set(this.challengers, 'challengerOneNickname', this.playerNickname);
+					this.$set(this.challengers, 'challengerOneRating', this.playerRating);
+				} else if(!this.challengerTwo){
+					this.challengerTwo = player;
+					this.$set(this.challengers, 'challengerTwoName', this.playerName);
+					this.$set(this.challengers, 'challengerTwoNickname', this.playerNickname);
+					this.$set(this.challengers, 'challengerTwoRating', this.playerRating);
+				}
+				if (this.challengerOne && this.challengerTwo) {
+					this.matchSet = true;
+				}
+				this.playerName = '';
         		this.playerNickname = '';
         		this.selectingPlayers = true;
         		this.creatingPlayer = false;

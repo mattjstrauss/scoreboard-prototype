@@ -56,7 +56,7 @@
 	margin-top: 60px;
 }
 .logo {
-	max-width: 200px;
-    margin: 0 auto;
+    max-width: 265px;
+    margin: 15px auto 0;
 }
 </style>

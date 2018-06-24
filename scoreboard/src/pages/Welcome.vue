@@ -20,7 +20,7 @@
 		data(){
 			return {
 				welcome: {
-					title: "Welcome To My Little Pool Playing Do-Dad Score Keeper Thingy",
+					title: "I'm Learning Vue",
 					message: "Thanks for checking me out!"
 				}
 			}
