@@ -94,6 +94,20 @@
 
 		</div>
 
+		<div class="ui card centered" v-show="!creatingPlayer && selectingPlayers && !matchSet">
+			
+			<div class="content">
+				
+				<div class="header">
+					
+					<h3>Create Your Matchup</h3>
+
+				</div>
+
+			</div>
+
+		</div>
+
 		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="!creatingPlayer && selectingPlayers && !matchSet && challengers.challengerOneName !== player.playerName && challengers.challengerTwoName !== player.playerName">
 
 			<div class="content left aligned">

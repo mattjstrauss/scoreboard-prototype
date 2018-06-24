@@ -222,7 +222,7 @@
 		},
 		computed: {
 		  leaderBoard: function () {
-		    return _.orderBy(this.players, 'playerScore', 'desc')
+		    return _.orderBy(this.players, 'playerWins', 'desc')
 		  }
 		}
 	}
