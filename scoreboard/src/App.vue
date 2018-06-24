@@ -1,10 +1,27 @@
 <template>
 
 	<div id="app">
-		
-		<img src="./assets/logo.svg" class="logo">
+			
+		<div class="ui card centered">
 
-		<create-player></create-player>
+			<nav>
+				<router-link to="/">
+					<img src="./assets/logo.svg" class="logo">
+				</router-link>
+
+				<div class="ui two item menu">
+
+					<router-link to="/challenge" class="item">Challenge</router-link>
+					<router-link to="/player-list" class="item">Players</router-link>
+
+				</div>
+
+			</nav>
+
+		</div>
+
+		<!-- Places the components to the right "router" from router/index.js -->
+		<router-view></router-view>
 
 	</div>
 
@@ -12,47 +29,19 @@
 
 <script>
 
-	// var config = {
-	// 	apiKey: "AIzaSyB8jDgVZt79C8VlwSlR_GX8ND6vEPJSOuk",
-	// 	authDomain: "scoreboard-prototype.firebaseapp.com",
-	// 	databaseURL: "https://scoreboard-prototype.firebaseio.com",
-	// 	projectId: "scoreboard-prototype",
-	// 	storageBucket: "scoreboard-prototype.appspot.com",
-	// 	messagingSenderId: "1054474587980"
-	// };
-	// firebase.initializeApp(config);
+	const config = {
+		apiKey: "AIzaSyB8jDgVZt79C8VlwSlR_GX8ND6vEPJSOuk",
+		authDomain: "scoreboard-prototype.firebaseapp.com",
+		databaseURL: "https://scoreboard-prototype.firebaseio.com",
+		projectId: "scoreboard-prototype",
+		storageBucket: "scoreboard-prototype.appspot.com",
+		messagingSenderId: "1054474587980"
+	};
 
-	// const database = firebase.database();
-
-	// database.ref('players').on('value', function(snapshot){
-
-		//console.log(snapshot.val());
-		
-	// });
-
-
-	import WelcomeCard from './components/WelcomeCard';
-	// import PlayerList from './components/PlayerList';
-	import CreatePlayer from './components/CreatePlayer';
+	firebase.initializeApp(config);
 
 	export default {
-		name: 'App',
-		components: {
-			WelcomeCard,
-			// PlayerList,
-			CreatePlayer
-		},
-		data() {
-			return {
-				intro: [{
-					title: "Get Ready to Party",
-					instructions: "Start a New Game or checkount the leaderboard."
-				}],
-				leaderboard: [{
-					title: "Leaderboard",
-				}]
-			}
-		}
+		name: 'App'
 	}
 
 </script>

@@ -1,16 +1,35 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import PlayerForm from '@/components/PlayerForm'
+
 import _ from 'lodash';
 
 Vue.use(Router)
+
+import Welcome from '@/pages/Welcome'
+import Players from '@/pages/PlayerList'
+import CreatePlayer from '@/pages/AddPlayer'
+import ChallengeList from '@/pages/ChallengeList'
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'PlayerForm',
-      component: PlayerForm
-    }
+      name: 'welcome',
+      component: Welcome
+    },
+    {
+    	path: '/player-list',
+    	name: 'player-list',
+		component: Players
+    },
+    {
+    	path: '/create-player',
+    	component: CreatePlayer
+    },
+    {
+    	path: '/challenge',
+    	name: 'challenge-list',
+    	component: ChallengeList
+    },
   ]
 })
