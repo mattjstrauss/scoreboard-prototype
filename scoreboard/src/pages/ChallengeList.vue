@@ -2,17 +2,17 @@
 	
 	<div id="challenge-list">
 
-		<div class="ui card centered">
+		<div class="ui card centered" v-show="!selectingPlayers && !creatingPlayer">
 			<div class="content">
 				<div class="header">
 					<h3>What kind of Player are you?</h3>
 					<div class="ui form">
 
-						<button class="ui button tiny">
+						<button class="ui button tiny" v-on:click="createPlayer">
 							New Player
 						</button>
 
-						<button class="ui button primary tiny">
+						<button class="ui button primary tiny" v-on:click="selectPlayers">
 							Returning Player
 						</button>
 
@@ -27,47 +27,46 @@
 
 				<div class="header">
 
-					<div class="three ui buttons">
+							<button v-if="challengers.challengerOneRating > 50" class="ui animated button fluid large red" v-on:click="removeChallengerOne" v-show="challengerOne">
 
-						<button v-if="challengers.challengerOneRating > 50" class="ui animated button large red" v-on:click="removeChallengerOne" v-show="challengerOne">
+							  	<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
+						  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
 
-						  	<div class="visible content">{{challengers.challengerOneName}}</div>
+							  	<div class="hidden content">
 
-						  	<div class="hidden content">
+							  		<i class="cancel icon"></i> Remove
 
-						  		<i class="cancel icon"></i> Remove
+							  	</div>
 
-						  	</div>
+						  	</button>
 
-					  	</button>
+						  	<button v-else class="ui animated button fluid large" v-on:click="removeChallengerOne" v-show="challengerOne">
 
-					  	<button v-else class="ui animated button large" v-on:click="removeChallengerOne" v-show="challengerOne">
+						  		<div class="visible content" v-if="challengers.challengerOneNickname">{{challengers.challengerOneNickname}}</div> 
+						  		<div class="visible content" v-else>{{challengers.challengerOneName}}</div>
 
-					  		<div class="visible content">{{challengers.challengerOneName}}</div>
+							  	<div class="hidden content">
 
-						  	<div class="hidden content">
+							  		<i class="cancel icon"></i> Remove
 
-						  		<i class="cancel icon"></i> Remove
+							  	</div>
 
-						  	</div>
-
-					  	</button>
+						  	</button>
 
 				  		<div class="vs"></div>
-					  
-				  		<button class="ui animated button large" v-on:click="removeChallengerTwo" v-show="challengerTwo">
-					  	
-					  		<div class="visible content">{{challengers.challengerTwoName}}</div>
-					  	
-					  		<div class="hidden content">
-						    
-						    	<i class="cancel icon"></i> Remove
+						  
+					  		<button class="ui animated button fluid large" v-on:click="removeChallengerTwo" v-show="challengerTwo">
+						  	
+						  		<div class="visible content" v-if="challengers.challengerTwoNickname">{{challengers.challengerTwoNickname}}</div> 
+						  		<div class="visible content" v-else>{{challengers.challengerTwoName}}</div>
+						  	
+						  		<div class="hidden content">
+							    
+							    	<i class="cancel icon"></i> Remove
 
-							</div>
+								</div>
 
-				  		</button>
-
-					</div>
+					  		</button>
 
 				</div>
 
@@ -80,7 +79,7 @@
 
 		</div>
 
-		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="!matchSet && challengers.challengerOneName !== player.playerName && challengers.challengerTwoName !== player.playerName">
+		<div class="ui card centered" v-for="(player, index) in leaderBoard" v-show="selectingPlayers && !matchSet && challengers.challengerOneName !== player.playerName && challengers.challengerTwoName !== player.playerName">
 
 			<div class="content left aligned">
 
@@ -90,7 +89,9 @@
 
 						<button class="ui button basic right labeled large icon" v-on:click.prevent="challenge(player)">
 							
-							<span class="player-name">{{player.playerName}}</span>
+							<span class="player-name" v-if="player.playerNickname">{{player.playerNickname}}</span> 
+							<span class="player-name" v-else>{{player.playerName}}</span> 
+							
 							<i class="ui icon toggle on green" v-show="challengers.challengerOneName == player.playerName || challengers.challengerTwoName == player.playerName"></i>
 							<i class="ui icon plus square outline"></i>
 
@@ -149,6 +150,54 @@
 
 		</div>
 
+		<button class="ui basic button icon" v-show="selectingPlayers && !creatingPlayer && !matchSet" v-on:click.prevent="createPlayer">
+
+			<i class="ui icon plus circle"></i> Add Player
+
+		</button>
+
+		<div id="create-player" class="ui basic content center aligned segment" v-show="creatingPlayer && !matchSet">
+
+			<div class="ui centered card">
+
+				<div class="content">
+
+					<div class="ui form">
+
+						<div class="field">
+
+							<label>Actual Name</label>
+							<input type="text" placeholder="Name" v-model="playerName">
+
+						</div>
+
+						<div class="field">
+
+							<label>Nickname</label>
+							<input type="text" placeholder="Nickname" v-model="playerNickname">
+
+						</div>
+
+						<button class="ui negative primary button" v-on:click.prevent="closeForm">
+
+							<i class="ui icon plus times circle"></i> Cancel
+
+						</button>
+
+						<button class="ui positive primary button" v-on:click.prevent="addPlayer">
+
+							<i class="ui icon plus check circle"></i> Create
+
+						</button>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
 	
 </template>
@@ -164,7 +213,7 @@
 			return {
 				players: [],
 				playerName: '',
-				playerNickName: '',
+				playerNickname: '',
 				playerWins: '',
 				playerLosses: '',
 				playerGamesPlayed: '',
@@ -172,30 +221,47 @@
 				challengers: {
 					'challengerOneName': '',
 					'challengerOneRating': '',
+					'challengerOneNickname': '',
 					'challengerTwoName': '',
 					'challengerTwoRating': '',
+					'challengerTwoNickname': '',
 				},
 				isChallenger: false,
 				challengerOne: null,
 				challengerTwo: null,
 				activePlayer: false,
 				matchSet: null,
-				isReady: false
+				isReady: false,
+				selectingPlayers: false,
+				creatingPlayer: false,
 			}
 		},
 		methods: {
 			// Pushes the name to Firebase and empties the field
 			addPlayer() {
-				playersRef.push({playerName: this.playerName, playerScore: 0})
-        		this.playerName = ''
+				playersRef.push({
+					playerName: this.playerName,
+					playerNickname: this.playerNickname,
+					playerWins: 0,
+					playerLosses: 0,
+					playerGamesPlayed: 0,
+					playerRating: 0,
+				})
+        		this.playerName = '';
+        		this.playerNickname = '';
+        		this.selectingPlayers = true;
+        		this.creatingPlayer = false;
 			},
 			// Shows "Add Player" form
-			openForm() {
-				this.isCreating = true;
+			createPlayer() {
+				this.creatingPlayer = true;
 			},
 			// Hides "Add Player" form
 			closeForm() {
-				this.isCreating = false;
+				this.creatingPlayer = false;
+			},
+			selectPlayers() {
+				this.selectingPlayers = true;
 			},
 			challenge(player) {
 				// challengers.push({playerName: this.playerName, playerScore: this.playerScore})
@@ -203,10 +269,12 @@
 				if(!this.challengerOne){
 					this.challengerOne = player;
 					this.$set(this.challengers, 'challengerOneName', player.playerName);
+					this.$set(this.challengers, 'challengerOneNickname', player.playerNickname);
 					this.$set(this.challengers, 'challengerOneRating', player.playerRating);
 				} else if(!this.challengerTwo){
 					this.challengerTwo = player;
 					this.$set(this.challengers, 'challengerTwoName', player.playerName);
+					this.$set(this.challengers, 'challengerTwoNickname', player.playerNickname);
 					this.$set(this.challengers, 'challengerTwoRating', player.playerRating);
 				}
 				if (this.challengerOne && this.challengerTwo) {
@@ -218,12 +286,14 @@
 				this.challengers.challengerOneName = '';
 				this.challengers.challengerOneRating = '';
 				this.challengerOne = null;
+				this.creatingPlayer = false;
 			},
 			removeChallengerTwo(){
 				this.matchSet = false;
 				this.challengers.challengerTwoName = '';
 				this.challengers.challengerTwoRating = '';
 				this.challengerTwo = null;
+				this.creatingPlayer = false;
 			}
 		},
 		created() {
@@ -264,26 +334,23 @@
     width: .3em;
     z-index: 3;
     font-size: 1rem;
+    display: block;
+    width: 100%;
 }
 .vs:before {
 	content: "vs";
-    position: absolute;
     text-align: center;
     border-radius: 500rem;
-    top: 50%;
-    left: 50%;
     background-color: #fff;
     text-shadow: none;
-    margin-top: -.89285714em;
-    margin-left: -.89285714em;
     width: 1.78571429em;
     height: 1.78571429em;
     line-height: 1.78571429em;
     color: rgba(0,0,0,.4);
     font-style: normal;
     font-weight: 700;
-    -webkit-box-shadow: 0 0 0 1px transparent inset;
     box-shadow: 0 0 0 1px transparent inset;
+    display: inline-block;
 }
 .ui.form .fields {
 	margin: 0 -.5em 0em;

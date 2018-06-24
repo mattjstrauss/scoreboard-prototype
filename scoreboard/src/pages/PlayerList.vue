@@ -230,32 +230,6 @@
 </script>
 
 <style>
-.vs {
-	position: relative;
-    width: .3em;
-    z-index: 3;
-    font-size: 1rem;
-}
-.vs:before {
-	content: "vs";
-    position: absolute;
-    text-align: center;
-    border-radius: 500rem;
-    top: 50%;
-    left: 50%;
-    background-color: #fff;
-    text-shadow: none;
-    margin-top: -.89285714em;
-    margin-left: -.89285714em;
-    width: 1.78571429em;
-    height: 1.78571429em;
-    line-height: 1.78571429em;
-    color: rgba(0,0,0,.4);
-    font-style: normal;
-    font-weight: 700;
-    -webkit-box-shadow: 0 0 0 1px transparent inset;
-    box-shadow: 0 0 0 1px transparent inset;
-}
 .ui.form .fields {
 	margin: 0 -.5em 0em;
 }
