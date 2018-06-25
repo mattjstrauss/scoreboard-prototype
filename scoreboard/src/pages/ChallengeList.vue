@@ -165,7 +165,7 @@
 						    <span class="ui red label" data-tooltip="Losses" data-position="bottom center">- {{player.playerLosses}}</span>
 						</div>
 
-						<div class="right floated" data-tooltip="Winning Percentage = (Wins / Total Games)*100" data-position="bottom center">
+						<div class="right floated" data-tooltip="Level of Difficulty based on 'Success Rating'" data-position="bottom center">
 
 							Difficulty: 
 

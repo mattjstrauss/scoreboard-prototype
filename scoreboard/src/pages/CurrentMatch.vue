@@ -94,10 +94,6 @@
 
 			</div>
 
-			<div class="no-match" v-if="gameFinished">
-				<h3>There are no matches</h3>
-			</div>
-
 		</div>
 
 	</div>
