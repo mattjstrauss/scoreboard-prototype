@@ -115,6 +115,7 @@
 				currentMatch: [],
 				currentWinner: '',
 				currentPlayer: '',
+				currentPlayerScore: 0,
 				totalScore: 0,
 				players: [],
 				playerName: '',
@@ -221,31 +222,44 @@
 		methods: {
 			
 			shotMade(ball){
-				if (this.currentPlayer) {
+
+				console.log(this.playerOneScore);
+				
+				if ( this.currentPlayer === this.currentMatch[0].challengerOne.playerName && this.playerOneScore >= 0 ) {
+
 					ball.active = !ball.active;
-				}
-				if ( this.currentPlayer === this.currentMatch[0].challengerOne.playerName ) {
+
 					if ( !ball.active ) {
 						this.playerOneScore++;
 						this.totalScore++;
 						ball.active;
-					} else {
+					} else if (this.playerOneScore > 0 ) {
 						this.playerOneScore--;
 						this.totalScore--;
 						!ball.active
-					}	
-				} else if ( this.currentPlayer === this.currentMatch[0].challengerTwo.playerName ) {
+					}
+
+					this.currentPlayerScore = this.playerOneScore;
+
+				} else if ( this.currentPlayer === this.currentMatch[0].challengerTwo.playerName && this.currentPlayerScore >= 0 ) {
+
+					ball.active = !ball.active;
+
 					if ( !ball.active ) {
 						this.playerTwoScore++;
 						this.totalScore++;
 						ball.active;
-					} else {
+					} else if (this.playerTwoScore > 0 ) {
 						this.playerTwoScore--;
 						this.totalScore--;
 						!ball.active;
 					}	
+
+					this.currentPlayerScore = this.playerTwoScore;
 				}
+
 				if(this.totalScore == 15) {
+					
 					this.gameFinished = true;
 					if ( this.playerOneScore > this.playerTwoScore ) {
 						if (this.currentMatch[0].challengerOne.playerNickname ) {
@@ -261,6 +275,7 @@
 						}
 					}
 				}
+				
 			},
 			challengerOne(currentMatch) {
 				this.currentPlayer = currentMatch[0].challengerOne.playerName
