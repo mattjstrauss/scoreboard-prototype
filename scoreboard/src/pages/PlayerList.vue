@@ -92,9 +92,10 @@
 
 					<div v-show="player !== editingPlayer">
 
-						<div class="left floated">
-						    <span class="ui green label" data-tooltip="Wins">+ {{player.playerWins}}</span>
-						    <span class="ui red label" data-tooltip="Losses">- {{player.playerLosses}}</span>
+						<div class="left floated stats">
+						    <span class="ui green label" data-tooltip="Wins" data-position="bottom center">+ {{player.playerWins}}</span>
+						    <span class="ui red label" data-tooltip="Losses" data-position="bottom center">- {{player.playerLosses}}</span>
+						    <span class="ui orange label" data-tooltip="Success Rating = (Higher Stat / Total Games)*100" data-position="bottom center">{{player.playerRating}}%</span>
 						</div>
 
 						<a class="ui button mini right floated" href="#" v-on:click.prevent="editPlayer(player)">
@@ -186,8 +187,24 @@
 					playerWins: Math.round(Number(this.playerWins)),
 					playerLosses: Math.round(Number(this.playerLosses)),
 					playerGamesPlayed: Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses)),
-					playerRating: Math.round(Math.round(Number(this.playerWins)) / (Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses))) * 100)
 				});
+
+				if (this.editingPlayer.playerGamesPlayed > 0) {
+
+					if ( this.editingPlayer.playerWins > this.editingPlayer.playerLosses ) {
+						
+						playersRef.child(this.editingPlayer.id).update({
+							playerRating: Math.floor(Math.round(Number(this.playerWins)) / (Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses))) * 100)
+						});
+
+					} else {
+
+						playersRef.child(this.editingPlayer.id).update({
+							playerRating: - + Math.floor(Math.round(Number(this.playerLosses)) / (Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses))) * 100)
+						});
+
+					}
+				}
 				this.cancelPlayerEdits();
 			},
 			// Deletes Player
@@ -217,6 +234,7 @@
 				updatedPlayer.playerNickname = snapshot.val().playerNickname;
 				updatedPlayer.playerWins = snapshot.val().playerWins;
 				updatedPlayer.playerLosses = snapshot.val().playerLosses;
+				updatedPlayer.playerRating = snapshot.val().playerRating;
 
 			});
 		},
@@ -233,5 +251,11 @@
 .ui.form .fields {
 	margin: 0 -.5em 0em;
 }
-	
+.stats {
+	position: relative;
+	z-index: 3;
+}
+#player-list {
+	padding-bottom: 100px;
+}
 </style>

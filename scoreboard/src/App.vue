@@ -9,10 +9,11 @@
 					<img src="./assets/logo.svg" class="logo">
 				</router-link>
 
-				<div class="ui two item menu">
+				<div class="ui three item menu">
 
 					<router-link to="/challenge" class="item">Challenge</router-link>
 					<router-link to="/player-list" class="item">Players</router-link>
+					<router-link to="/current-match" class="item">Match</router-link>
 
 				</div>
 
@@ -53,7 +54,7 @@
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	margin-top: 60px;
+	margin: 20px 0 30px;
 }
 .logo {
     max-width: 265px;

@@ -17,14 +17,19 @@
 		components: { 
 			WelcomeCard
 		},
-		data(){
+		data() {
 			return {
 				welcome: {
-					title: "I'm Learning Vue",
-					message: "Thanks for checking me out!"
+					title: 'Welcome To VueBall',
+					message: 'My sad excuse for my attempt to breakdown this concept in every way I can think of.'
 				}
 			}
 		}
 	}
 	
 </script>
+
+<style>
+	
+
+</style>

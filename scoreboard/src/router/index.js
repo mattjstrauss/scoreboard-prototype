@@ -9,6 +9,7 @@ import Welcome from '@/pages/Welcome'
 import Players from '@/pages/PlayerList'
 import CreatePlayer from '@/pages/AddPlayer'
 import ChallengeList from '@/pages/ChallengeList'
+import CurrentMatch from '@/pages/CurrentMatch'
 
 export default new Router({
   routes: [
@@ -20,7 +21,7 @@ export default new Router({
     {
     	path: '/player-list',
     	name: 'player-list',
-		component: Players
+		  component: Players
     },
     {
     	path: '/create-player',
@@ -30,6 +31,11 @@ export default new Router({
     	path: '/challenge',
     	name: 'challenge-list',
     	component: ChallengeList
+    },
+    {
+      path: '/current-match',
+      name: 'current-match',
+      component: CurrentMatch,
     },
   ]
 })
