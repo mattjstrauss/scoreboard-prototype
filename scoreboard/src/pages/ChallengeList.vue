@@ -343,12 +343,8 @@
 			},
 			acceptChallenge(player){
 				matchesRef.push({
-					matchChallengers: {
-						challengerOne: this.challengerOne,
-						challengerTwo: this.challengerTwo,
-					},
-					challengerTwoScore: 0,
-					challengerOneScore: 0,
+					challengerOne: this.challengerOne,
+					challengerTwo: this.challengerTwo,
 					matchWinner: '',
 					matchLooser: '',
 					matchStatus: true,
