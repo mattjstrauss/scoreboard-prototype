@@ -31,21 +31,50 @@
 					</div>
 
 					<div class="extra content">
-						<h5 v-if="!gameFinished">Select Your Winner</h5>
-						<h4 v-else>Congratulations</h4>
+						<h5 v-if="!gameFinished && currentPlayer == ''">Select Your Player To Begin</h5>
+
+						<div v-else class="ui statistics">
+							<div class="statistic">
+							    <div class="value">
+							      {{playerOneScore}}
+							    </div>
+							    <div class="label">
+							      Balls
+							    </div>
+						  	</div>
+						  	<div class="statistic">
+							    <div class="value">
+							      {{playerTwoScore}}
+							    </div>
+							    <div class="label">
+							      Balls
+							    </div>
+						  	</div>
+						</div>
+
 					</div>
 
 					<div class="ui buttons two" v-if="!gameFinished">
 
-						<div class="ui left bottom attached button" v-on:click="challengerOneWin(currentMatch)">
+						<div :class="[ 'ui left bottom attached button ', + (currentPlayer === currentMatch[0].challengerOne.playerName) ? 'active-player' : '' ]" v-on:click="challengerOne(currentMatch)">
 						
-							<h4>{{ match.challengerOne.playerName }}</h4>
+							<h4 v-if='match.challengerOne.playerNickname'>
+								{{ match.challengerOne.playerNickname }}
+							</h4>
+							<h4 v-else='match.challengerOne.playerName'>
+								{{ match.challengerOne.playerName }}
+							</h4>
 						
 						</div>
 
-						<div class="ui right bottom attached button" v-on:click="challengerTwoWin(currentMatch)">
+						<div :class="[ 'ui right bottom attached button ', + (currentPlayer === currentMatch[0].challengerTwo.playerName) ? 'active-player' : '' ]" v-on:click="challengerTwo(currentMatch)">
 						
-							<h4>{{ match.challengerTwo.playerName }}</h4>
+							<h4 v-if='match.challengerTwo.playerNickname'>
+								{{ match.challengerTwo.playerNickname }}
+							</h4>
+							<h4 v-else='match.challengerTwo.playerName'>
+								{{ match.challengerTwo.playerName }}
+							</h4>
 						
 						</div>
 
@@ -89,6 +118,8 @@
 				playerTwoScore: 0,
 				currentMatch: [],
 				currentWinner: '',
+				currentPlayer: '',
+				totalScore: 0,
 				players: [],
 				playerName: '',
 				gameFinished: false,
@@ -192,20 +223,56 @@
 			}
 		},
 		methods: {
-			// Pushes the name to Firebase and empties the field
+			
 			shotMade(ball){
-				ball.active = !ball.active;
-				console.log(this.currentMatch[0]);
+				if (this.currentPlayer) {
+					ball.active = !ball.active;
+				}
+				if ( this.currentPlayer === this.currentMatch[0].challengerOne.playerName ) {
+					if ( !ball.active ) {
+						this.playerOneScore++;
+						this.totalScore++;
+						ball.active;
+					} else {
+						this.playerOneScore--;
+						this.totalScore--;
+						!ball.active
+					}	
+				} else if ( this.currentPlayer === this.currentMatch[0].challengerTwo.playerName ) {
+					if ( !ball.active ) {
+						this.playerTwoScore++;
+						this.totalScore++;
+						ball.active;
+					} else {
+						this.playerTwoScore--;
+						this.totalScore--;
+						!ball.active;
+					}	
+				}
+				if(this.totalScore == 15) {
+					this.gameFinished = true;
+					if ( this.playerOneScore > this.playerTwoScore ) {
+						if (this.currentMatch[0].challengerOne.playerNickname ) {
+							this.currentWinner = this.currentMatch[0].challengerOne.playerNickname;
+						} else {
+							this.currentWinner = this.currentMatch[0].challengerOne.playerName;
+						}
+					} else {
+						if (this.currentMatch[0].challengerTwo.playerNickname ) {
+							this.currentWinner = this.currentMatch[0].challengerTwo.playerNickname;
+						} else {
+							this.currentWinner = this.currentMatch[0].challengerTwo.playerName;
+						}
+					}
+				}
 			},
-			challengerOneWin(currentMatch) {
-				// this.editingPlayer = match.challengerOne;
-				// this.playerName = match.challengerOne.playerName;
-				// this.playerNickname = match.challengerOne.playerNickname;
-				// this.playerWins = match.challengerOne.playerWins;
-				// this.playerLosses = match.challengerOne.playerLosses;
-				console.log(currentMatch[0].challengerOne);
-				this.currentWinner = currentMatch[0].challengerOne.playerName;
-				this.gameFinished = true;
+			challengerOne(currentMatch) {
+				this.currentPlayer = currentMatch[0].challengerOne.playerName
+				console.log(this.currentPlayer);
+			},
+			challengerTwo(currentMatch) {
+				this.currentPlayer = currentMatch[0].challengerTwo.playerName;
+				console.log(this.currentPlayer);
 			},
 			challengerTwoWin(currentMatch) {
 				// this.editingPlayer = match.challengerTwo;
@@ -252,9 +319,7 @@
 		},
 		created() {
 
-			matchesRef.on('child_added', snapshot => this.currentMatch.push({...snapshot.val(), id: snapshot.key}));
-
-			console.log(matchesRef)
+			matchesRef.limitToLast(1).on('child_added', snapshot => this.currentMatch.push({...snapshot.val(), id: snapshot.key}));
 
 			// playersRef.on('child_removed', snapshot => {
 
@@ -407,5 +472,33 @@
 	.ui.right.attached.button,
 	.ui.left.attached.button {
 		text-align: center !important;
+	    padding: .78571429em .75em .78571429em;
+		align-items: center;
+		justify-content: center;
+		display: flex;
+	}
+	.active-player {
+		background: #302e2e !important;
+		color: white !important;
+	}
+	.ui.statistics {
+		margin: 0;
+	}
+	.ui.statistics>.statistic {
+		width: 50%;
+		margin: 0;
+	}
+	.ui.statistics>.statistic:first-child {
+		position: relative;
+	}
+	.ui.statistics>.statistic:first-child:after {
+		content: "";
+		display: block;
+		width: 1px;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: rgba(34,36,38,.1);
 	}
 </style>
