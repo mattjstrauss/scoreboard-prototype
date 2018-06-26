@@ -95,7 +95,7 @@
 						<div class="left floated stats">
 						    <span class="ui green label" data-tooltip="Wins" data-position="bottom center">+ {{player.playerWins}}</span>
 						    <span class="ui red label" data-tooltip="Losses" data-position="bottom center">- {{player.playerLosses}}</span>
-						    <span class="ui orange label" data-tooltip="Success Rating = (Higher Stat / Total Games)*100" data-position="bottom center">{{player.playerRating}}%</span>
+						    <span :class="'ui label ' + [player.playerRating < 55 ? 'blue' : player.playerRating < 60 ? 'green' : player.playerRating < 70 ? 'olive' : player.playerRating < 80 ? 'yellow' : player.playerRating < 90 ? 'orange' : player.playerRating <= 100 ? 'red' : 'blue']" data-tooltip="Success Rating = (Higher Stat / Total Games)*100" data-position="bottom center">{{player.playerRating}}%</span>
 						</div>
 
 						<a class="ui button mini right floated" href="#" v-on:click.prevent="editPlayer(player)">
@@ -181,6 +181,7 @@
 			},
 			// Save and removes "Player Editing" abilities
 			savePlayerEdits() {
+				
 				playersRef.child(this.editingPlayer.id).update({
 					playerName: this.playerName,
 					playerNickname: this.playerNickname,
@@ -189,9 +190,9 @@
 					playerGamesPlayed: Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses)),
 				});
 
-				if (this.editingPlayer.playerGamesPlayed > 0) {
+				if ((this.editingPlayer.playerGamesPlayed > 0) && ( this.editingPlayer.playerWins != 0 && this.editingPlayer.playerLosses !=0 ) ) {
 
-					if ( this.editingPlayer.playerWins > this.editingPlayer.playerLosses ) {
+					if ( this.editingPlayer.playerWins >= this.editingPlayer.playerLosses ) {
 						
 						playersRef.child(this.editingPlayer.id).update({
 							playerRating: Math.floor(Math.round(Number(this.playerWins)) / (Math.round(Number(this.playerWins)) + Math.round(Number(this.playerLosses))) * 100)
@@ -257,5 +258,23 @@
 }
 #player-list {
 	padding-bottom: 100px;
+}
+.ui.label.olive {
+	background: #b5cc18;
+}
+.ui.label.green {
+	background: #21ba45;
+}
+.ui.label.yellow {
+	background: #fbbd08;
+}
+.ui.label.blue {
+	background: #2185d0;
+}
+.ui.label.red {
+	background: #db2828;
+}
+.ui.label.orange {
+	background: #f2711c;
 }
 </style>
